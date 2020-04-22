@@ -1,0 +1,49 @@
+<<html>
+
+	<head>
+		 <title>Memory Cache Calculator</title>
+ 	</head>
+
+ 	<body>
+ 		<h1>Direct Mapped Memory Cache Caluclator</h1>
+ 		<p>How many total bits are required for a direct-mapped cache with </p>
+ 		<form name="theForm" method="get" onsubmit="return onSubmit()">
+ 		    <input type="text" id="amount" name="amount"></input> 
+ 		    <select id="unit" name="unit">
+ 		        <option value = "kb">KB</option>
+ 		    </select>
+ 		
+ 		<p>of data and </p>
+ 		    <select id="words" name="words">
+ 		        <option value="1">1</option>
+ 		        <option value="4">4</option>
+ 		    </select>
+ 		    <p>word blocks, assuming a 32-bit address?</p>
+ 		    <input type="submit" id="submit" name="submit" value="Calculate"></input>
+ 		</form>
+ 		
+ 		<p id="output"></p>
+ 	</body>
+
+ </html>
+ 
+ <style>
+     body{
+         width:50%;
+         margin:auto;
+     }
+ </style>
+ 
+ <script>
+     function onSubmit(){
+         var form = document.forms["theForm"];
+         var memoryNumber = form["amount"];
+         var memoryScalar = form["unit"];
+         var numWords = form["words"];
+         var output = document.getElementById("output");
+         
+         output = "Memory number = " + memoryNumber;
+         
+         
+     }
+ </script>

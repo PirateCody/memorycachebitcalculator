@@ -1,4 +1,5 @@
-<<html>
+<!DOCTYPE html>
+<html>
 
 	<head>
 		 <title>Memory Cache Calculator</title>
@@ -7,10 +8,12 @@
  	<body>
  		<h1>Direct Mapped Memory Cache Caluclator</h1>
  		<p>How many total bits are required for a direct-mapped cache with </p>
- 		<form name="theForm" method="get" onsubmit="return onSubmit()">
+ 		<form name="theForm" method="get" onsubmit="return onSubmit()" target="_self">
  		    <input type="text" id="amount" name="amount"></input> 
  		    <select id="unit" name="unit">
  		        <option value = "kb">KB</option>
+				<option value = "mb">MB</option>
+				<option value = "gb">GB</option>
  		    </select>
  		
  		<p>of data and </p>
@@ -19,7 +22,7 @@
  		        <option value="4">4</option>
  		    </select>
  		    <p>word blocks, assuming a 32-bit address?</p>
- 		    <input type="submit" id="submit" name="submit" value="Calculate"></input>
+ 		    <input type="button" id="submit" name="submit" value="Calculate" onclick="onSubmit()"></input>
  		</form>
  		
  		<p id="output"></p>
@@ -37,12 +40,52 @@
  <script>
      function onSubmit(){
          var form = document.forms["theForm"];
-         var memoryNumber = form["amount"];
-         var memoryScalar = form["unit"];
-         var numWords = form["words"];
+         var memoryNumber = form["amount"].value;
+         var memoryScalar = form["unit"].value;
+         var numWords = form["words"].value;
          var output = document.getElementById("output");
+		 var ADDRESS = 32;
+		 var BYTE_OFFSET = 2;
+		 var VALIDATION_BIT = 1;
          
-         output = "Memory number = " + memoryNumber;
+         //output.innerHTML = "Memory number = " + memoryNumber;
+		 
+		 var dataExponent = Math.log2(memoryNumber); // the memory number as 2^n 
+		 
+		 // This determines the exponent of the unit (KB, MB, GB) when it is written as 2^n.
+		 // e.g. KB is 2^10 bytes. 
+		 var memoryExponent;
+		 switch(memoryScalar){
+			case "kb":
+				memoryExponent = 10;
+				break;
+			case "mb":
+				memoryExponent = 20;
+				break;
+			case "gb":
+				memoryExponent = 30;
+		 }
+		 
+		 // Determines the exponent for the number of words when written in the form 2^n
+		 var numWordsExponent = (memoryExponent + dataExponent) - 2;
+		 
+		 // Determines the word offset. The word offset only matters if the word blocks are bigger than 1.
+		 // The word offset is equal to the exponent of the number of words written as 2^n. 
+		 var wordOffset = 0;
+		 if(numWords > 1){
+			wordOffset = Math.log2(numWords)
+		}
+		
+		// The number of rows is equal to the number of words when there's only 1 word in each block.
+		// When there's more than 1 word in a block there are fewer words 2^(n-word offset) to be exact.
+		var numRowsExp = 0;
+		numRowsExp = numWordsExponent - wordOffset;
+		
+		
+		var numTagBits = ADDRESS - (numRowsExp + wordOffset + BYTE_OFFSET);
+		var bitsPerRow = VALIDATION_BIT + numTagBits + (ADDRESS*numWords);
+		
+		output.innerHTML = "Total bits = " + bitsPerRow +"bits * " + "2^" + numRowsExp + "rows. ";
          
          
      }
